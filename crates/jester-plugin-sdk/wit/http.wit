@@ -1,0 +1,10 @@
+package jester:plugin;
+
+interface http {
+  type Headers = list<tuple<string, string>>;
+  record Request { method: string, uri: string, headers: Headers, body: list<u8> }
+  record Response { status: u16, headers: Headers, body: list<u8> }
+
+  /// Synchronous filter hook invoked before upstream selection.
+  http-filter: func(req: Request) -> result<Response, Request>;
+}

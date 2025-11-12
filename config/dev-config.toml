@@ -1,0 +1,29 @@
+# Dev testing config for Jester
+
+[plugins]
+search_paths = ["./plugins"]
+allow_unsafe_dylib = false
+
+[[listeners]]
+name = "dev-edge"
+bind = ":8443"
+alpn = ["h2", "http/1.1"]
+
+[listeners.tls]
+cert = "${CERT_PATH:certs/dev.crt}"
+key  = "${KEY_PATH:certs/dev.key}"
+
+[[routes]]
+name = "app"
+[routes.matchers]
+hosts = ["app.local.test"]
+path_prefix = "/"
+
+[[routes.filters]]
+type = "builtin"
+name = "timeout"
+config = { request_secs = 5 }
+
+[routes.upstream]
+strategy = "single"
+target = "${UPSTREAM_URL:http://127.0.0.1:8080}"

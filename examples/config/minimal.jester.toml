@@ -1,0 +1,25 @@
+# Minimal TLS-terminating forward proxy
+
+[[listeners]]
+name = "edge443"
+bind = ":443"
+alpn = ["h2", "http/1.1"]
+
+[listeners.tls]
+cert = "${CERT_PATH:certs/dev.crt}"
+key  = "${KEY_PATH:certs/dev.key}"
+
+[[routes]]
+name = "app"
+[routes.matchers]
+hosts = ["example.com"]
+path_prefix = "/"
+
+[[routes.filters]]
+type = "builtin"
+name = "timeout"
+config = { request_secs = 5 }
+
+[routes.upstream]
+strategy = "single"
+target = "http://127.0.0.1:8080"
